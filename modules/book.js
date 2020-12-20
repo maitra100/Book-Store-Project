@@ -1,5 +1,6 @@
 const mongoose=require("mongoose");
 const Joi = require("joi");
+const {genreschema}=require("./genre");
 
 
 const bookschema=mongoose.Schema({
@@ -9,12 +10,7 @@ const bookschema=mongoose.Schema({
      maxlength:20,
      required:true,
    } ,
-   genre:{
-       type:String,
-       required:true,
-       minlength:2,
-       maxlength:20,       
-   },
+   genre:genreschema,
    author:{
        type:String,
        required:true,
@@ -33,11 +29,10 @@ function validatebook(book)
 {
     const schema=Joi.object({
         name:Joi.string().required().min(2).max(20),
-        genre:Joi.string().required().min(2).max(20),
         author:Joi.string().required(),
         price:Joi.number().required().min(100).max(1000),
     })
-    return schema.validate({name:book.name,genre:book.genre,author:book.author,price:book.price});
+    return schema.validate({name:book.name,author:book.author,price:book.price});
 }
 
 module.exports.Books=Books;

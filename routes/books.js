@@ -2,6 +2,7 @@ const express=require("express");
 const route=express.Router();
 const mongoose=require("mongoose");
 const {Books,validatebook}=require("../modules/book");
+const { Genre } = require("../modules/genre");
 
 route.get("/",async (req,res)=>{
  const books=await Books.find();
@@ -16,9 +17,15 @@ route.get("/:id",async (req,res)=>{
 });
 
 route.post("/",async (req,res)=>{
+  const genres=await Genre.findById(req.body.genreId);
+  if(!genres)
+  return res.status(404).send("given genre not available");
    const book=await new Books({
      name:req.body.name,
-     genre:req.body.genre,
+     genre:{
+       id:genres.id,
+       name:genres.name,
+     },
      author:req.body.author,
      price:req.body.price
    });
@@ -30,16 +37,25 @@ route.post("/",async (req,res)=>{
 });
 
 route.put("/:id",async (req,res)=>{
+  const genres=await Genre.findById(req.body.genreId);
+  if(!genres)
+  return res.status(404).send("given genre not available");
   const books=await Books.findByIdAndUpdate(req.params.id,{
+    name:req.body.name,
+    genre:{
+      id:genres.id,
+      name:genres.id,
+    },
     author:req.body.author,
+    price:req.body.price,
   },{new:true});
   res.send(books);
 });
 
-route.delete("/:id", (req,res)=>{
-  const books= Books.findByIdAndRemove(req.params.id)
-  .then(()=>res.send(books))
-  .catch(err=>res.send("error"));
+route.delete("/:id",async (req,res)=>{
+  const books=await Books.findByIdAndRemove(req.params.id);
+  res.send(books);
+
 });
 
 
