@@ -2,6 +2,8 @@ const express=require("express");
 const route=express.Router();
 const mongoose=require("mongoose");
 const {Genre,validategenre}=require("../modules/genre");
+const auth=require("../middleware/auth");
+const admin=require("../middleware/admin");
 
 route.get("/",async (req,res)=>{
   const genres=await Genre.find().sort({name:1});
@@ -13,7 +15,7 @@ route.get("/:id",async(req,res)=>{
   res.send(genres);
 });
 
-route.post("/",async (req,res)=>{
+route.post("/",auth,async (req,res)=>{
   const genre=await new Genre({
       name:req.body.name,
   });
@@ -31,7 +33,7 @@ route.put("/:id",async (req,res)=>{
   res.send(genre);
 });
 
-route.delete("/:id",async (req,res)=>{
+route.delete("/:id",[auth,admin],async (req,res)=>{
   const genre=await Genre.findByIdAndRemove(req.params.id);
   res.send(genre);
 });

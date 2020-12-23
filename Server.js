@@ -6,6 +6,13 @@ const route1=require("./routes/books");
 const route2=require("./routes/genres");
 const route3=require("./routes/users");
 const route4=require("./routes/auth");
+const config=require("config");
+
+if(!config.get("jwtPrivatekey")){
+    console.error("ERROR");
+    process.exit(1);
+}
+
 
 
 mongoose.connect('mongodb://127.0.0.1:27017/Store', { useNewUrlParser: true ,useUnifiedTopology: true})

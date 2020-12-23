@@ -5,6 +5,7 @@ const {User}=require("../modules/user");
 const Joi = require("joi");
 const bcrypt=require("bcrypt");
 const jwt=require("jsonwebtoken");
+const config=require("config");
 
 route.post("/",async (req,res)=>{
     const user=await User.findOne({email:req.body.email});
@@ -13,7 +14,7 @@ route.post("/",async (req,res)=>{
     if(error.error) return res.status(404).send(error.error.details[0].message);
     const result=await bcrypt.compare(req.body.password,user.password);
     if(!result) return res.status(404).send("Invalid email or password");
-    const token=jwt.sign({id:user.id},"jwtprivatekey");
+    const token=user.generateAuthtoken();
     res.send(token);
 });
 
