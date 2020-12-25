@@ -6,8 +6,13 @@ const auth=require("../middleware/auth");
 const admin=require("../middleware/admin");
 
 route.get("/",async (req,res)=>{
+  try{
   const genres=await Genre.find().sort({name:1});
   res.send(genres);
+  }
+  catch(ex){
+    next();
+  }
 });
 
 route.get("/:id",async(req,res)=>{
